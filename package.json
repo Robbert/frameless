@@ -1,15 +1,15 @@
 {
-  "name": "frameless-ci",
+  "name": "frameless",
   "version": "0.0.1",
   "author": "Robbert Broersma <mail@robbertbroersma.nl>",
-  "description": "Frameless Continuous Integration",
+  "description": "Frameless",
   "contributors": {
     "name": "Robbert Broersma",
     "mail": "mail@robbertbroersma.nl"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/robbert/frameless-ci"
+    "url": "https://github.com/robbert/frameless"
   },
   "keywords": [
     "frameless"
