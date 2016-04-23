@@ -1,0 +1,22 @@
+{
+  "name": "frameless-ci",
+  "version": "0.0.1",
+  "author": "Robbert Broersma <mail@robbertbroersma.nl>",
+  "description": "Frameless Continuous Integration",
+  "contributors": {
+    "name": "Robbert Broersma",
+    "mail": "mail@robbertbroersma.nl"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/robbert/frameless-ci"
+  },
+  "keywords": [
+    "frameless"
+  ],
+  "license": "SEE LICENSE IN license.txt",
+  "private": true,
+  "engine": {
+    "node": ">=1.0"
+  }
+}
