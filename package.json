@@ -18,5 +18,11 @@
   "private": true,
   "engine": {
     "node": ">=1.0"
+  },
+  "devDependencies": {
+    "eslint": "~2.8.0"
+  },
+  "scripts": {
+    "test": "eslint src/"
   }
 }
