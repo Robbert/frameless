@@ -20,9 +20,10 @@
     "node": ">=1.0"
   },
   "devDependencies": {
-    "eslint": "~2.8.0"
+    "eslint": "~2.8.0",
+    "eclint": "~1.1.5"
   },
   "scripts": {
-    "test": "eslint src/"
+    "test": "eslint src/; eclint check *"
   }
 }
