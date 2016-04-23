@@ -1,0 +1,6 @@
+© 2013 The Knights Who Say NIH
+All rights reserved.
+
+By accessing this repository you agree to not disclose documentation, code,
+software, trade secrets, copyrights and other intellectual property interests
+found in the contents of this repository.
