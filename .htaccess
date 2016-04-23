@@ -1,0 +1,15 @@
+AddType application/xml .xsd .xsl .rng
+AddType application/xhtml+xml .xhtml
+AddType application/json .json
+AddType text/plain .rng .diff .txt
+AddType application/javascript .js .js.gz
+AddType image/svg+xml .svg
+AddType application/woff2 .woff2
+
+AddCharset UTF-8 .js .json .xsd .xsl .xml .rng .txt .css .svg .html .htm .md
+AddEncoding gzip .gz
+
+# Video
+AddType video/ogg .ogv
+AddType video/mp4 .mp4
+AddType video/webm .webm
