@@ -39,7 +39,7 @@ define("freedom-0.org/robot/string/URI", function ()
                 if (map[name] === null)
                     buffer.push(name);
                 else
-                    buffer.push(name + '=' + escape(map[name]));
+                    buffer.push(name + "=" + escape(map[name]));
             }
         }
 
@@ -65,7 +65,7 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         // TODO: Handle non-URL codepoints
         // @see https://url.spec.whatwg.org/#url-code-points
-        return hash.replace(/[\0\t\r\n]+/g, '');
+        return hash.replace(/[\0\t\r\n]+/g, "");
     };
 
     /**
@@ -87,16 +87,16 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         var pairs, item, map = {};
 
-        if (str.charAt(0) === '?')
+        if (str.charAt(0) === "?")
         {
             str = str.substr(1);
         }
 
-        pairs = str.split('&');
+        pairs = str.split("&");
 
         for (var i = pairs.length; i--;)
         {
-            item = pairs[i].split('=');
+            item = pairs[i].split("=");
             map[decodeURIComponent(item[0])] = item[1] ? decodeURIComponent(item[1]) : "";
         }
 
@@ -119,13 +119,13 @@ define("freedom-0.org/robot/string/URI", function ()
     };
 
     /**
-     * Regular expression to capture the different parts of URLs, being 
+     * Regular expression to capture the different parts of URLs, being
      * scheme, hostname, path, query and hash.
-     * 
+     *
      * Does no precise validation, because this expression will also be used
      * to parse URL templates, which often are invalid URLs themselves.
      * E.g.: "{scheme}://example.com" will still match this regexp.
-     * 
+     *
      * @const
      * @type {RegExp}
      */
@@ -216,28 +216,28 @@ define("freedom-0.org/robot/string/URI", function ()
         }
         else
         {
-            if (uri.path.charAt(0) === '/')
+            if (uri.path.charAt(0) === "/")
             {
                 path = uri.path;
             }
-            else if (uri.components.authority === '')
+            else if (uri.components.authority === "")
             {
                 /** @type {Array.<string>} */
                 var dirs = [];
 
-                // Add base URI dirs to the path, omitting '.'
+                // Add base URI dirs to the path, omitting "."
                 for (i = 0; i < this.dirs.length; ++i)
                 {
-                    if (this.dirs[i] !== '.')
+                    if (this.dirs[i] !== ".")
                     {
                         dirs.push(this.dirs[i]);
                     }
                 }
 
-                // Add relative URI dirs to the path, omitting '.'
+                // Add relative URI dirs to the path, omitting "."
                 for (i = 0; i < uri.dirs.length; ++i)
                 {
-                    if (uri.dirs[i] !== '.')
+                    if (uri.dirs[i] !== ".")
                     {
                         dirs.push(uri.dirs[i]);
                     }
@@ -254,22 +254,22 @@ define("freedom-0.org/robot/string/URI", function ()
 
                 file = uri.file !== "." && uri.file !== ".." ? uri.file : "";
 
-                if (uri.file === '..')
+                if (uri.file === "..")
                 {
                     dirs.pop();
                 }
 
-                path = (this.path.charAt(0) === '/' || this.path.charAt(0) === '' ? '/' : '') + dirs.join('/') + (dirs.length > 0 ? '/' : '') + file;
+                path = (this.path.charAt(0) === "/" || this.path.charAt(0) === " ? "/" : ") + dirs.join("/") + (dirs.length > 0 ? "/" : "") + file;
             }
             else
             {
-                path = '';
+                path = "";
             }
 
             scheme    = this.components.scheme.toLowerCase();
             authority = uri.components.authority || this.components.authority;
-            query     = uri.query ? '?' + uri.query : '';
-            fragment  = uri.fragment ? '#' + uri.fragment : '';
+            query     = uri.query ? "?" + uri.query : "";
+            fragment  = uri.fragment ? "#" + uri.fragment : "";
 
             return new URI(scheme + authority + path + query + fragment);
         }
@@ -283,18 +283,18 @@ define("freedom-0.org/robot/string/URI", function ()
         var match = /** @type {Array.<string>} */ (URI.regexp1.exec(string));
 
         this.components = {
-            scheme:     match[1] || '',
-            authority:  match[3] || '',
-            path:       match[5] || '',
-            query:      match[6] || '',
-            fragment:   match[8] || ''
+            scheme:     match[1] || "",
+            authority:  match[3] || "",
+            path:       match[5] || "",
+            query:      match[6] || "",
+            fragment:   match[8] || ""
         };
 
-        this.scheme    = match[2] || '';
-        this.authority = match[4] || '';
-        this.path      = match[5] || '';
-        this.query     = match[7] || '';
-        this.fragment  = match[9] || '';
+        this.scheme    = match[2] || "";
+        this.authority = match[4] || "";
+        this.path      = match[5] || "";
+        this.query     = match[7] || "";
+        this.fragment  = match[9] || "";
 
         var at = this.authority.indexOf("@");
         var port = this.authority.lastIndexOf(":");
@@ -320,17 +320,17 @@ define("freedom-0.org/robot/string/URI", function ()
 
         if (port > at)
         {
-            this.port = this.hostname.substring(port + 1).replace(/^0+(.+)$/, "$1")
+            this.port = this.hostname.substring(port + 1).replace(/^0+(.+)$/, "$1");
             this.hostname = this.hostname.substring(0, port);
         }
 
         if (this.hostname)
-            this.hostname = this.hostname.toLowerCase().replace(/\u3002|\uFF0E|\uFF61/g, ".")
+            this.hostname = this.hostname.toLowerCase().replace(/\u3002|\uFF0E|\uFF61/g, ".");
 
         if (this.path)
         {
             this.dirs = /** @type {Array.<string>} */ (this.path.match(URI.regexp2) || []);
-            if (this.path.charAt(this.path.length-1) !== '/')
+            if (this.path.charAt(this.path.length-1) !== "/")
             {
                 var file = this.dirs.pop();
                 if (!file || file === "." || file === "..")
@@ -341,7 +341,7 @@ define("freedom-0.org/robot/string/URI", function ()
         else
         {
             this.dirs = [];
-            this.file = '';
+            this.file = "";
         }
 
         if (this.query)
@@ -349,11 +349,11 @@ define("freedom-0.org/robot/string/URI", function ()
             this.params = URI.parseQueryParams(this.query);
         }
 
-        this.isAbsolute      = this.scheme !== '';
-        this.isRelative      = this.scheme === '';
-        this.isSelfReference = this.scheme + this.authority + this.path + this.query === '';
-        this.isEmpty         = this.isSelfReference && this.fragment === '';
-        this.isHTTP          = this.scheme === 'http' || this.scheme === 'https';
+        this.isAbsolute      = this.scheme !== "";
+        this.isRelative      = this.scheme === "";
+        this.isSelfReference = this.scheme + this.authority + this.path + this.query === "";
+        this.isEmpty         = this.isSelfReference && this.fragment === "";
+        this.isHTTP          = this.scheme === "http" || this.scheme === "https";
     };
 
     /**
@@ -483,7 +483,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.removeInvalidCharacters = function (url)
     {
-        return url.replace(URI.INVALID_REGEXP_BMP, "")
+        return url.replace(URI.INVALID_REGEXP_BMP, "");
     };
 
     /**
@@ -509,7 +509,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.removeUnsafeProtocol = function (url)
     {
-        url = URI.removeInvalidCharacters(url)
+        url = URI.removeInvalidCharacters(url);
 
         // Escape protocols that can serve a JavaScript payload
         // TODO: Should the about: protocol be escaped too? Or should the protocols be whitelisted?
@@ -518,7 +518,7 @@ define("freedom-0.org/robot/string/URI", function ()
 
         // The Internet Explorer only `mhtml` scheme is a bad idea too
         // @see http://html5sec.org/#96
-        url = url.replace(URI.UNSAFE_PROTOCOL_REGEXP, 'about:blank')
+        url = url.replace(URI.UNSAFE_PROTOCOL_REGEXP, "about:blank");
 
         return url;
     };
