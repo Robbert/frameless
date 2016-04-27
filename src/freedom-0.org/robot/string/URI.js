@@ -173,16 +173,28 @@ define("freedom-0.org/robot/string/URI", function ()
     /** @type {string} */
     URI.prototype.file = "";
 
-    /** @type {boolean} */
+    /**
+     * @category Flags
+     * @type {boolean}
+     */
     URI.prototype.isAbsolute = false;
 
-    /** @type {boolean} */
+    /**
+     * @category Flags
+     * @type {boolean}
+     */
     URI.prototype.isRelative = false;
 
-    /** @type {boolean} */
+    /**
+     * @category Flags
+     * @type {boolean}
+     */
     URI.prototype.isSelfReference = false;
 
-    /** @type {boolean} */
+    /**
+     * @category Flags
+     * @type {boolean}
+     */
     URI.prototype.isEmpty = true;
 
     /**
