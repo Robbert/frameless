@@ -3,3 +3,4 @@ desktop.ini
 Thumbs.db
 node_modules
 .sublime-workspace
+*.log
