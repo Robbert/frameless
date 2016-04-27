@@ -24,6 +24,11 @@
     "eclint": "~1.1.5"
   },
   "scripts": {
-    "test": "eslint src/; eclint check *"
+    "test": "eslint src/; eclint check *",
+    "build": "documentation serve src/freedom-0.org/robot/string/URI.js",
+    "build": "documentation serve src/freedom-0.org/robot/string/URI.js ../wealth/src/freedom-0.org/robot/data/SortFunction.js"
+  },
+  "dependencies": {
+    "documentation": "^4.0.0-beta2"
   }
 }
