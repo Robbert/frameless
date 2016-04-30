@@ -24,6 +24,7 @@
     "eclint": "~1.1.5"
   },
   "scripts": {
-    "test": "eslint src/; eclint check *"
+    "test": "eslint src/ && eclint check *",
+    "postinstall": "ln -s .pre-commit.sh .git/hooks/pre-commit"
   }
 }
