@@ -449,9 +449,11 @@ define("freedom-0.org/robot/string/URI", function ()
          * @param {string} hex
          * @return {string}
          */
-        return str.replace(/%([0-9A-F]{2})/gi, function (match, hex) {
+        function hex2char(match, hex) {
             return String.fromCharCode(parseInt(hex, 16));
-        });
+        }
+
+        return str.replace(/%([0-9A-F]{2})/gi, hex2char);
     };
 
     /**
