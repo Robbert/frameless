@@ -259,7 +259,10 @@ define("freedom-0.org/robot/string/URI", function ()
                     dirs.pop();
                 }
 
-                path = (this.path.charAt(0) === "/" || this.path.charAt(0) === " ? "/" : ") + dirs.join("/") + (dirs.length > 0 ? "/" : "") + file;
+                path = (this.path.charAt(0) === "/" || this.path.charAt(0) === "" ? "/" : "")
+                    + dirs.join("/")
+                    + (dirs.length > 0 ? "/" : "")
+                    + file;
             }
             else
             {
@@ -559,17 +562,17 @@ define("freedom-0.org/robot/string/URI", function ()
     };
 
     /**
-     * @param {string} a
-     * @param {string} b
+     * @param {string} preceding
+     * @param {string} following
      * @return {number}
      */
-    URI.sortFunction = function (a, b)
+    URI.sortFunction = function (preceding, following)
     {
-        a = new URI(a);
-        b = new URI(b);
+        var a = new URI(preceding),
+            b = new URI(following),
+            comparison,
+            dirs = a.dirs.length - b.dirs.length;
 
-        var comparison;
-        var dirs = a.dirs.length - b.dirs.length;
         if (dirs)
             return dirs;
 
