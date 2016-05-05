@@ -3,10 +3,16 @@
 
 root = true
 
-[*]
-charset = utf-8
+[*.{htaccess,htm,html,js,json,md,php,sh,txt,xml,xsd,xsl,yml}]
+charset = UTF-8
 end_of_line = lf
 indent_size = 2
 indent_style = space
 insert_final_newline = true
 trim_trailing_whitespace = true
+
+[*.{js,php}]
+indent_size = 4
+
+[*.{htaccess,sh}]
+charset = US-ASCII
