@@ -3,22 +3,35 @@
   "version": "0.0.1",
   "author": "Robbert Broersma <mail@robbertbroersma.nl>",
   "description": "Frameless",
-  "contributors": {
-    "name": "Robbert Broersma",
-    "mail": "mail@robbertbroersma.nl"
-  },
+  "homepage": "http://frameless.io/",
+  "maintainers": [
+    {
+      "name": "Robbert Broersma",
+      "url": "http://robbertbroersma.nl/"
+    }
+  ],
+  "contributors": [
+    {
+      "name": "Robbert Broersma",
+      "url": "http://robbertbroersma.nl/"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/robbert/frameless"
+    "url": "https://github.com/wesaynih/frameless"
+  },
+  "bugs": {
+    "url": "https://github.com/wesaynih/frameless/issues"
   },
   "keywords": [
     "frameless"
   ],
   "license": "SEE LICENSE IN license.txt",
   "private": true,
-  "engine": {
+  "engines": {
     "node": ">=1.0"
   },
+  "dependencies": {},
   "devDependencies": {
     "eslint": "~2.8.0",
     "eclint": "~1.1.5"
