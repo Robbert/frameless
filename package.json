@@ -34,7 +34,7 @@
   "dependencies": {},
   "devDependencies": {
     "eclint": "~1.1.5",
-    "eslint": "~2.8.0",
+    "eslint": "~2.9.0",
     "google-closure-compiler": "^20160315.2.0",
     "gulp": "^3.9.1",
     "lodash": "^4.11.1",
