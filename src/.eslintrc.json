@@ -1,5 +1,6 @@
 {
   "rules": {
+    "no-implicit-globals": ["error"],
     "strict": ["error", "function"]
   }
 }
