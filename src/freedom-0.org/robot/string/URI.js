@@ -29,17 +29,19 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.encodeParams = function toQueryParams(map, escape)
     {
-        var buffer = [];
+        var name, value,
+            buffer = [];
 
-        for (var name in map)
+        for (name in map)
         {
             if (map.hasOwnProperty(name))
             {
                 // TODO: Add support for Array values
-                if (map[name] === null)
-                    buffer.push(name);
-                else
-                    buffer.push(name + "=" + escape(map[name]));
+                value = map[name] === null
+                    ? name
+                    : name + "=" + escape(map[name]);
+
+                buffer.push(value);
             }
         }
 
@@ -85,7 +87,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.parseQueryParams = function (str)
     {
-        var pairs, item, map = {};
+        var i, pairs, item, map = {};
 
         if (str.charAt(0) === "?")
         {
@@ -94,7 +96,7 @@ define("freedom-0.org/robot/string/URI", function ()
 
         pairs = str.split("&");
 
-        for (var i = pairs.length; i--;)
+        for (i = pairs.length; i--;)
         {
             item = pairs[i].split("=");
             map[decodeURIComponent(item[0])] = item[1] ? decodeURIComponent(item[1]) : "";
@@ -191,7 +193,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.prototype.resolve = function resolve(that)
     {
-        var i, path, file, scheme, authority, query, fragment, uri;
+        var i, dirs, path, file, scheme, authority, query, fragment, uri;
 
         if (typeof that === "string")
         {
@@ -223,7 +225,7 @@ define("freedom-0.org/robot/string/URI", function ()
             else if (uri.components.authority === "")
             {
                 /** @type {Array.<string>} */
-                var dirs = [];
+                dirs = [];
 
                 // Add base URI dirs to the path, omitting "."
                 for (i = 0; i < this.dirs.length; ++i)
@@ -283,7 +285,8 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.prototype.parse = function parse(string)
     {
-        var match = /** @type {Array.<string>} */ (URI.regexp1.exec(string));
+        var at, port, index, file,
+            match = /** @type {Array.<string>} */ (URI.regexp1.exec(string));
 
         this.components = {
             scheme:     match[1] || "",
@@ -299,20 +302,21 @@ define("freedom-0.org/robot/string/URI", function ()
         this.query     = match[7] || "";
         this.fragment  = match[9] || "";
 
-        var at = this.authority.indexOf("@");
-        var port = this.authority.lastIndexOf(":");
+        at   = this.authority.indexOf("@");
+        port = this.authority.lastIndexOf(":");
+
         if (at === -1)
         {
             this.hostname = this.authority;
         }
         else
         {
-            var passwordIndex = this.authority.indexOf(":");
+            index = this.authority.indexOf(":");
 
-            if (passwordIndex !== -1 && passwordIndex < at)
+            if (index !== -1 && index < at)
             {
-                this.username = this.authority.substring(0, passwordIndex);
-                this.password = this.authority.substring(passwordIndex + 1, at);
+                this.username = this.authority.substring(0, index);
+                this.password = this.authority.substring(index + 1, at);
             }
             else
             {
@@ -328,16 +332,20 @@ define("freedom-0.org/robot/string/URI", function ()
         }
 
         if (this.hostname)
+        {
             this.hostname = this.hostname.toLowerCase().replace(/\u3002|\uFF0E|\uFF61/g, ".");
+        }
 
         if (this.path)
         {
             this.dirs = /** @type {Array.<string>} */ (this.path.match(URI.regexp2) || []);
+
             if (this.path.charAt(this.path.length-1) !== "/")
             {
-                var file = this.dirs.pop();
-                if (!file || file === "." || file === "..")
+                file = this.dirs.pop();
+                if (!file || file === "." || file === "..") {
                     file = "";
+                }
                 this.file = file;
             }
         }
@@ -573,8 +581,10 @@ define("freedom-0.org/robot/string/URI", function ()
             comparison,
             dirs = a.dirs.length - b.dirs.length;
 
-        if (dirs)
+        // FIXME: Surely, this must be a bug: dirs should only matter when everything up to the path is equal, right?
+        if (dirs) {
             return dirs;
+        }
 
         // TODO: Sort http:// after the path-relative URLs
 
