@@ -46,7 +46,7 @@
     "lint:eslint": "eslint *.js src/",
     "lint:editorconfig": "eclint check *",
     "lint:closure-compiler": "gulp lint:closure-compiler",
-    "lint:optional-closure-compiler": "if type -p java; then npm run lint:closure-compiler; else true; fi",
+    "lint:optional-closure-compiler": "if which java >/dev/null 2>&1; then npm run lint:closure-compiler; else true; fi",
     "postinstall": "ln -fs .pre-commit.sh .git/hooks/pre-commit"
   }
 }
