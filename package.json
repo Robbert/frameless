@@ -42,10 +42,11 @@
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "npm run lint:closure-compiler && npm run lint:editorconfig && npm run lint:eslint",
+    "lint": "npm run lint:optional-closure-compiler && npm run lint:editorconfig && npm run lint:eslint",
     "lint:eslint": "eslint *.js src/",
     "lint:editorconfig": "eclint check *",
     "lint:closure-compiler": "gulp lint:closure-compiler",
+    "lint:optional-closure-compiler": "if type -p java; then npm run lint:closure-compiler; else true; fi",
     "postinstall": "ln -fs .pre-commit.sh .git/hooks/pre-commit"
   }
 }
