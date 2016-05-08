@@ -1,36 +1,108 @@
 "use strict";
 
-var gulp = require("gulp"),
-    closure = require("google-closure-compiler").gulp(),
-    _ = require("lodash");
+var gulp = require("gulp");
 
-// TODO: Load copyright line from `license.txt` and output it inside a comment
-var license = "(c) " + new Date().getFullYear() + " All rights reserved.";
+// Gulp task `lint:closure-compiler`
+(function () {
+    var closure = require("google-closure-compiler").gulp(),
+        _ = require("lodash");
 
-var closureSettings = {
-    "compilation_level": "ADVANCED_OPTIMIZATIONS",
-    "language_in": "ECMASCRIPT5_STRICT",
-    "summary_detail_level": 3,
-    "charset": "UTF-8",
-    "warning_level": "VERBOSE",
-    "externs": [
-        "node_modules/nih-externs/lib/amd.js"
-    ],
-    "use_types_for_optimization": undefined,
-    "new_type_inf": undefined,
-    "assume_function_wrapper": undefined,
-    "output_wrapper": "/** @license " + license + " */void function(){%output%}();"
-};
+    // TODO: Load copyright line from `license.txt` and output it inside a comment
+    var license = "(c) " + new Date().getFullYear() + " All rights reserved.";
 
-gulp.task("lint:closure-compiler", function () {
-
-    var lintSettings = {
-        "checks_only": undefined
+    var closureSettings = {
+        "compilation_level": "ADVANCED_OPTIMIZATIONS",
+        "language_in": "ECMASCRIPT5_STRICT",
+        "summary_detail_level": 3,
+        "charset": "UTF-8",
+        "warning_level": "VERBOSE",
+        "externs": [
+            "node_modules/nih-externs/lib/amd.js"
+        ],
+        "use_types_for_optimization": undefined,
+        "new_type_inf": undefined,
+        "assume_function_wrapper": undefined,
+        "output_wrapper": "/** @license " + license + " */void function(){%output%}();"
     };
 
-    lintSettings = _.merge({}, closureSettings, lintSettings);
+    gulp.task("lint:closure-compiler", function () {
 
-    return gulp.src("./src/**/*.js", { "base": "./" })
-        .pipe(closure(lintSettings))
-        .pipe(gulp.dest("./dist"));
-});
+        var lintSettings = {
+            "checks_only": undefined
+        };
+
+        lintSettings = _.merge({}, closureSettings, lintSettings);
+
+        return gulp.src("./src/**/*.js", { "base": "./" })
+            .pipe(closure(lintSettings));
+    });
+}());
+
+// Gulp task `lint:package-json`
+(function () {
+    var _ = require("lodash"),
+        _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        packageValidator = require("package-json-validator").PJV,
+        lintSettings = {
+            "spec": "npm",
+            "warnings": true,
+            "recommendations": true
+        },
+        pluginName = "validate-package";
+
+    function packageValidatorPlugin(settings)
+    {
+        var spec = settings.spec || "json";
+
+        // Creating a stream through which each file will pass
+        function streamValidator(file, enc, cb)
+        {
+            var result, LF = "\n", msg = "",
+                err = null;
+
+            if (file.isBuffer())
+            {
+                result = packageValidator.validate(file.contents.toString("UTF-8"), spec, settings);
+            }
+            else if (file.isStream())
+            {
+                err = new PluginError(pluginName, "Streams are not supported.");
+            }
+
+            if (result)
+            {
+                if (!result.valid)
+                {
+                    msg += "package.json is NOT valid!";
+                }
+
+                if (!_.isEmpty(result.errors))
+                {
+                    msg += LF + result.errors.join(LF) + LF;
+                }
+
+                if (!_.isEmpty(result.recommendations) && lintSettings.recommendations)
+                {
+                    msg += "Please fix the following recommendations in package.json:" + LF;
+                    msg += result.recommendations.join(LF);
+                }
+
+                if (msg)
+                {
+                    err = new PluginError(pluginName, msg);
+                }
+            }
+
+            cb(err, file);
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:package-json", function () {
+        return gulp.src("package.json", { "base": "./" })
+            .pipe(packageValidatorPlugin(lintSettings));
+    });
+}());
