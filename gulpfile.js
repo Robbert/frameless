@@ -236,3 +236,22 @@ function src(pattern)
             .pipe(filenameValidatorPlugin());
     });
 }());
+
+// Gulp task `lint:editorconfig`
+(function () {
+    var _ = require("lodash"),
+        lintspaces = require("gulp-lintspaces"),
+        options = {
+            "editorconfig": ".editorconfig",
+            "ignores": [
+                "js-comments"
+            ]
+        };
+
+
+    gulp.task("lint:editorconfig", function () {
+        return src("**")
+            .pipe(lintspaces(options))
+            .pipe(lintspaces.reporter());
+    });
+}());
