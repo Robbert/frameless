@@ -200,18 +200,29 @@ function src(pattern)
         through = require("through2"),
         PluginError = _gulp.PluginError,
         sanitize = require("sanitize-filename"),
-        pluginName = "validate-filename";
+        pluginName = "validate-filename",
+        MAX_FILENAME_LENGTH = 32;
 
     function filenameValidatorPlugin()
     {
         function streamValidator(file, enc, cb)
         {
-            var err = null,
+            var err = null, msg,
                 filename = file.path.replace(/^.+\//, "");
 
             if (sanitize(filename) !== filename)
             {
                 err = new PluginError(pluginName, "Filename not allowed: " + filename);
+            }
+
+            if (filename.length > MAX_FILENAME_LENGTH)
+            {
+                msg = "Filename too long: " + filename
+                    + " (length: " + filename.length
+                    + ", max: " + MAX_FILENAME_LENGTH
+                    + ")";
+
+                err = new PluginError(pluginName, msg);
             }
 
             cb(err, file);
