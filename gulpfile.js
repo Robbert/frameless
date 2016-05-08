@@ -192,3 +192,36 @@ function src(pattern)
             .pipe(yamlValidatorPlugin());
     });
 }());
+
+// Gulp task `lint:filename`
+(function () {
+    var _ = require("lodash"),
+        _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        sanitize = require("sanitize-filename"),
+        pluginName = "validate-filename";
+
+    function filenameValidatorPlugin()
+    {
+        function streamValidator(file, enc, cb)
+        {
+            var err = null,
+                filename = file.path.replace(/^.+\//, "");
+
+            if (sanitize(filename) !== filename)
+            {
+                err = new PluginError(pluginName, "Filename not allowed: " + filename);
+            }
+
+            cb(err, file);
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:filename", function () {
+        return src("**")
+            .pipe(filenameValidatorPlugin());
+    });
+}());

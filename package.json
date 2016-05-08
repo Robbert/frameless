@@ -39,13 +39,15 @@
     "js-yaml": "^3.6.0",
     "lodash": "^4.11.1",
     "nih-externs": "git://github.com/wesaynih/externs.git",
-    "package-json-validator": "^0.6.1"
+    "package-json-validator": "^0.6.1",
+    "sanitize-filename": "^1.6.0"
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "npm run lint:optional-closure-compiler && npm run lint:eslint && npm run lint:package-json && npm run lint:yaml",
+    "lint": "npm run lint:optional-closure-compiler && npm run lint:eslint && npm run lint:package-json && npm run lint:yaml && npm run lint:filename",
     "lint:eslint": "eslint *.js src/",
     "lint:closure-compiler": "gulp lint:closure-compiler",
+    "lint:filename": "gulp lint:filename",
     "lint:optional-closure-compiler": "if which java >/dev/null 2>&1; then npm run lint:closure-compiler; else true; fi",
     "lint:package-json": "gulp lint:package-json",
     "lint:yaml": "gulp lint:yaml",
