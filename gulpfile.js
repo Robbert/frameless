@@ -106,3 +106,49 @@ var gulp = require("gulp");
             .pipe(packageValidatorPlugin(lintSettings));
     });
 }());
+
+
+// Gulp task `lint:yaml`
+(function () {
+    var _ = require("lodash"),
+        _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        yaml = require("js-yaml"),
+        pluginName = "validate-yaml";
+
+    function yamlValidatorPlugin()
+    {
+        function streamValidator(file, enc, cb)
+        {
+            var contents, LF = "\n", msg = "",
+                err = null;
+
+            if (file.isBuffer())
+            {
+                try
+                {
+                    contents = file.contents.toString("UTF-8");
+                    yaml.safeLoad(contents);
+                }
+                catch (e)
+                {
+                    err = new PluginError(pluginName, e.message);
+                }
+            }
+            else if (file.isStream())
+            {
+                err = new PluginError(pluginName, "Streams are not supported.");
+            }
+
+            cb(err, file);
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:yaml", function () {
+        return gulp.src("**/*.yml", { "base": "./" })
+            .pipe(yamlValidatorPlugin());
+    });
+}());
