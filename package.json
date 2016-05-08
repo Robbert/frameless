@@ -33,7 +33,6 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "eclint": "~1.1.5",
     "eslint": "~2.9.0",
     "google-closure-compiler": "^20160315.2.0",
     "gulp": "^3.9.1",
@@ -44,9 +43,8 @@
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "npm run lint:optional-closure-compiler && npm run lint:editorconfig && npm run lint:eslint && npm run lint:package-json && npm run lint:yaml",
+    "lint": "npm run lint:optional-closure-compiler && npm run lint:eslint && npm run lint:package-json && npm run lint:yaml",
     "lint:eslint": "eslint *.js src/",
-    "lint:editorconfig": "eclint check *",
     "lint:closure-compiler": "gulp lint:closure-compiler",
     "lint:optional-closure-compiler": "if which java >/dev/null 2>&1; then npm run lint:closure-compiler; else true; fi",
     "lint:package-json": "gulp lint:package-json",
