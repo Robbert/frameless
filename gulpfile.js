@@ -2,6 +2,42 @@
 
 var gulp = require("gulp");
 
+/**
+ * Files that need to be ignored by all linting tasks.
+ */
+var lintIgnore = [
+    "node_modules/**"
+];
+
+/**
+ * Create a string prepend function.
+ *
+ * @param {string} prefix
+ * @return {function(string):string}
+ */
+function prepend(prefix)
+{
+    return function prepend(str)
+    {
+        return prefix + str;
+    };
+}
+
+/**
+ * Pre-configured version of `gulp.src` for finding files for linting.
+ * @param {string} pattern
+ */
+function src(pattern)
+{
+    var ignore = lintIgnore.map(prepend("!"));
+
+    var args = typeof pattern === "string" ? [pattern] : pattern;
+
+    args = args.concat(ignore);
+
+    return gulp.src(args, { "base": "./" });
+}
+
 // Gulp task `lint:closure-compiler`
 (function () {
     var closure = require("google-closure-compiler").gulp(),
@@ -33,7 +69,7 @@ var gulp = require("gulp");
 
         lintSettings = _.merge({}, closureSettings, lintSettings);
 
-        return gulp.src("./src/**/*.js", { "base": "./" })
+        return src("./src/**/*.js")
             .pipe(closure(lintSettings));
     });
 }());
@@ -106,7 +142,7 @@ var gulp = require("gulp");
     }
 
     gulp.task("lint:package-json", function () {
-        return gulp.src("package.json", { "base": "./" })
+        return src("package.json")
             .pipe(packageValidatorPlugin(lintSettings));
     });
 }());
@@ -152,7 +188,7 @@ var gulp = require("gulp");
     }
 
     gulp.task("lint:yaml", function () {
-        return gulp.src("**/*.yml", { "base": "./" })
+        return src("**/*.yml")
             .pipe(yamlValidatorPlugin());
     });
 }());
