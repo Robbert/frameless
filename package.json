@@ -52,6 +52,6 @@
     "lint:optional-closure-compiler": "if which java >/dev/null 2>&1; then npm run lint:closure-compiler; else true; fi",
     "lint:package-json": "gulp lint:package-json",
     "lint:yaml": "gulp lint:yaml",
-    "postinstall": "ln -fs .pre-commit.sh .git/hooks/pre-commit"
+    "postinstall": "ln -fs ../../.pre-commit.sh .git/hooks/pre-commit"
   }
 }
