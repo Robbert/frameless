@@ -193,7 +193,10 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.prototype.resolve = function resolve(that)
     {
-        var i, dirs, path, file, scheme, authority, query, fragment, uri;
+        var i, path, file, scheme, authority, query, fragment, uri;
+
+        /** @type {Array.<string>} */
+        var dirs;
 
         if (typeof that === "string")
         {
@@ -224,7 +227,6 @@ define("freedom-0.org/robot/string/URI", function ()
             }
             else if (uri.components.authority === "")
             {
-                /** @type {Array.<string>} */
                 dirs = [];
 
                 // Add base URI dirs to the path, omitting "."
