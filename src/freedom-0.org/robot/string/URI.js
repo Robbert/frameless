@@ -589,10 +589,10 @@ define("freedom-0.org/robot/string/URI", function ()
         // TODO: Sort http:// after the path-relative URLs
 
         comparison = URI.compare(a.hostname, b.hostname)
-                  || URI.compare(a.path,     b.path)
-                  || URI.compare(a.query,    b.query)
-                  || URI.compare(a.fragment, b.fragment)
-                  || URI.compare(a.scheme,   b.scheme);
+            || URI.compare(a.path,     b.path)
+            || URI.compare(a.query,    b.query)
+            || URI.compare(a.fragment, b.fragment)
+            || URI.compare(a.scheme,   b.scheme);
 
         return comparison;
     };
