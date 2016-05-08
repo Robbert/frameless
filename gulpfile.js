@@ -52,6 +52,29 @@ var gulp = require("gulp");
         },
         pluginName = "validate-package";
 
+    function formatError(result)
+    {
+        var msg = "";
+
+        if (!result.valid)
+        {
+            msg += "package.json is NOT valid!";
+        }
+
+        if (!_.isEmpty(result.errors))
+        {
+            msg += LF + result.errors.join(LF) + LF;
+        }
+
+        if (!_.isEmpty(result.recommendations))
+        {
+            msg += "Please fix the following recommendations in package.json:" + LF;
+            msg += result.recommendations.join(LF);
+        }
+
+        return msg;
+    }
+
     function packageValidatorPlugin(settings)
     {
         var spec = settings.spec || "json";
@@ -71,28 +94,9 @@ var gulp = require("gulp");
                 err = new PluginError(pluginName, "Streams are not supported.");
             }
 
-            if (result)
+            if (result && (!result.valid || lintSettings.recommendations && !_.isEmpty(result.recommendations)))
             {
-                if (!result.valid)
-                {
-                    msg += "package.json is NOT valid!";
-                }
-
-                if (!_.isEmpty(result.errors))
-                {
-                    msg += LF + result.errors.join(LF) + LF;
-                }
-
-                if (!_.isEmpty(result.recommendations) && lintSettings.recommendations)
-                {
-                    msg += "Please fix the following recommendations in package.json:" + LF;
-                    msg += result.recommendations.join(LF);
-                }
-
-                if (msg)
-                {
-                    err = new PluginError(pluginName, msg);
-                }
+                err = new PluginError(pluginName, formatError(result));
             }
 
             cb(err, file);
