@@ -33,16 +33,16 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "~2.9.0",
-    "google-closure-compiler": "^20160315.2.0",
-    "gulp": "^3.9.1",
+    "eslint": "^2.9",
+    "google-closure-compiler": "*",
+    "gulp": "^3.9",
     "gulp-html": "^0.4",
-    "gulp-lintspaces": "^0.4.1",
-    "js-yaml": "^3.6.0",
-    "lodash": "^4.11.1",
+    "gulp-lintspaces": "^0.4",
+    "js-yaml": "^3.6",
+    "lodash": "^4.11",
     "nih-externs": "git://github.com/wesaynih/externs.git",
-    "package-json-validator": "^0.6.1",
-    "sanitize-filename": "^1.6.0"
+    "package-json-validator": "^0.6",
+    "sanitize-filename": "^1.6"
   },
   "scripts": {
     "test": "npm run lint",
