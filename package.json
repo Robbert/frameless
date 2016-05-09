@@ -34,7 +34,7 @@
   "dependencies": {},
   "devDependencies": {
     "eslint": "^2.9",
-    "google-closure-compiler": "*",
+    "google-closure-compiler": ">=20160315",
     "gulp": "^3.9",
     "gulp-html": "^0.4",
     "gulp-lintspaces": "^0.4",
