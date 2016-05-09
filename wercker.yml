@@ -6,7 +6,7 @@
 
 box: node
 
-test:
+build:
   steps:
     - script:
         name: Log Node.js version
