@@ -29,7 +29,7 @@
   "license": "SEE LICENSE IN license.txt",
   "private": true,
   "engines": {
-    "node": ">=1.0"
+    "node": ">=4.2.0"
   },
   "dependencies": {},
   "devDependencies": {
