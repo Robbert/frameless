@@ -264,3 +264,59 @@ function src(pattern)
             .pipe(validator());
     });
 }());
+
+// Gulp task `lint:chmod`
+(function () {
+
+    var fs = require("fs"),
+        _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        pluginName = "chmod",
+        OCTAL_0777 = parseInt("0777", 8),
+        settings = {
+            dir: parseInt("0755", 8),
+            file: parseInt("0644", 8)
+        };
+
+    function permissionValidatorPlugin(settings)
+    {
+        function streamValidator(file, enc, cb)
+        {
+            var err = null, msg,
+                filename = file.path.replace(/^.+\//, "");
+
+            fs.lstat(file.path, function (e, stat) {
+                var msg, err;
+
+                if (err)
+                {
+                    msg = "Couldn't read file permissions: " + e.message;
+                }
+                else if (stat.isDirectory() && (stat.mode & OCTAL_0777) !== settings.dir)
+                {
+                    msg = "Directory permissions not valid for: " + file.path
+                        + "Expected: " + settings.dir.toString(8)
+                        + ". Found: " + (stat.mode & OCTAL_0777).toString(8);
+                }
+                else if (stat.isFile() && (stat.mode & OCTAL_0777) !== settings.file)
+                {
+                    msg = "File permissions not valid for: " + file.path
+                        + "\nExpected: " + settings.file.toString(8)
+                        + "\nFound: " + (stat.mode & OCTAL_0777).toString(8);
+                }
+
+                err = e || msg ? new PluginError(pluginName, msg) : null;
+
+                cb(err, file);
+            });
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:chmod", function() {
+        return src("**")
+            .pipe(permissionValidatorPlugin(settings));
+    });
+}());
