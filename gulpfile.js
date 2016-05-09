@@ -255,3 +255,12 @@ function src(pattern)
             .pipe(lintspaces.reporter());
     });
 }());
+
+// Gulp task `lint:html`
+(function () {
+    var validator = require("gulp-html");
+    gulp.task("lint:html", function() {
+        return src("**/*.html")
+            .pipe(validator());
+    });
+}());
