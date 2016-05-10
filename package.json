@@ -40,6 +40,8 @@
     "gulp-lintspaces": "^0.4",
     "js-yaml": "^3.6",
     "lodash": "^4.11",
+    "media-type": "^0.3.0",
+    "mime-db": "^1.23.0",
     "nih-externs": "git://github.com/wesaynih/externs.git",
     "package-json-validator": "^0.6",
     "sanitize-filename": "^1.6"

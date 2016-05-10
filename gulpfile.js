@@ -9,6 +9,87 @@ var lintIgnore = [
     "node_modules/**"
 ];
 
+var mediaType = (function ()
+{
+    var _ = require("lodash"),
+        mimeDB = require("mime-db"),
+        MediaType = require("media-type");
+
+    /**
+     * @param {string} mediaType
+     * @return {Array<string>}
+     */
+    function getMediaTypeExtensions(mediaType)
+    {
+        // TODO: Is this really necessary?
+        var normalized = MediaType.fromString(mediaType).asString();
+
+        return mimeDB[normalized] && mimeDB[normalized].extensions || [];
+    }
+
+    /**
+     * @param {string} mediaType
+     * @return {boolean}
+     */
+    function isJSON(mediaType)
+    {
+        var type = MediaType.fromString(mediaType);
+
+        return type.type === "application"
+            && (type.subtype === "json" || type.suffix === "json");
+    }
+
+    /**
+     * @param {string} mediaType
+     * @return {Array<string>}
+     */
+    function getMediaTypeExtensionsPattern(mediaType)
+    {
+        return getExtensionsPattern(getMediaTypeExtensions(mediaType));
+    }
+
+    /**
+     * @param {Array<string>} extensions
+     * @return {string}
+     */
+    function getExtensionsPattern(extensions)
+    {
+        // Sort the file extensions alphabetically for readability
+        extensions = [].concat(extensions).sort();
+
+        return extensions.length > 1
+            ? "**/*.{" + extensions + "}"
+            : extensions.length === 1
+            ? "**/*." + extensions[0]
+            : "";
+    }
+
+    /**
+     * Match `application/json` and `application/*.json`.
+     *
+     * @return {string}
+     */
+    function getJSONPattern()
+    {
+        var jsonDefs = _.filter(mimeDB, function (item, type) {
+            return isJSON(type);
+        });
+
+        var extensions = _.flatten(_.map(jsonDefs, function (item) {
+            return item.extensions || [];
+        }));
+
+        return getExtensionsPattern(extensions);
+    }
+
+    return {
+        isJSON: isJSON,
+        getExtensionsPattern: getExtensionsPattern,
+        getJSONPattern: getJSONPattern,
+        getMediaTypeExtensionsPattern: getMediaTypeExtensionsPattern
+    };
+}());
+
 /**
  * Create a string prepend function.
  *
@@ -69,7 +150,7 @@ function src(pattern)
 
         lintSettings = _.merge({}, closureSettings, lintSettings);
 
-        return src("./src/**/*.js")
+        return src("./src/" + mediaType.getMediaTypeExtensionsPattern("application/javascript"))
             .pipe(closure(lintSettings));
     });
 }());
@@ -233,7 +314,7 @@ function src(pattern)
     }
 
     gulp.task("lint:json", function () {
-        return src("**/*.json")
+        return src(mediaType.getJSONPattern())
             .pipe(jsonValidatorPlugin());
     });
 }());
@@ -305,7 +386,7 @@ function src(pattern)
 (function () {
     var validator = require("gulp-html");
     gulp.task("lint:html", function() {
-        return src("**/*.html")
+        return src(["application/xhtml+xml", "text/html"].map(mediaType.getMediaTypeExtensionsPattern))
             .pipe(validator());
     });
 }());
