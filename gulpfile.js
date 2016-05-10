@@ -446,3 +446,13 @@ function src(pattern)
             .pipe(permissionValidatorPlugin(settings));
     });
 }());
+
+// Gulp task `lint:css`
+(function () {
+    var csslint = require("gulp-csslint");
+    gulp.task("lint:css", function() {
+        return src(mediaType.getMediaTypeExtensionsPattern("text/css"))
+            .pipe(csslint(".csslintrc.json"))
+            .pipe(csslint.reporter());
+    });
+}());

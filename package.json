@@ -36,6 +36,7 @@
     "eslint": "^2.9",
     "google-closure-compiler": ">=20160315",
     "gulp": "^3.9",
+    "gulp-csslint": "^0.3",
     "gulp-html": "^0.4",
     "gulp-lintspaces": "^0.4",
     "js-yaml": "^3.6",
