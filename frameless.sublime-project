@@ -11,8 +11,8 @@
         ".eslintrc*",
         ".editorconfig",
         ".eslintrc*",
-        ".gitignore",
-        ".hgignore",
+        ".git*",
+        ".hg*",
         ".htaccess"
       ],
       "folder_exclude_patterns":
