@@ -52,7 +52,7 @@
     "lint": "gulp lint:chmod lint:editorconfig lint:filename lint:json lint:package-json lint:yaml && npm run lint:eslint && npm run lint:java-dependent-detection",
     "lint:eslint": "eslint *.js src/",
     "lint:filename": "gulp lint:filename",
-    "lint:java-dependent": "gulp lint:closure-compiler lint:html",
+    "lint:java-dependent": "gulp lint:closure-compiler lint:html-validator",
     "lint:java-dependent-detection": "if which java >/dev/null 2>&1; then npm run lint:java-dependent; else true; fi",
     "lint:package-json": "gulp lint:package-json",
     "lint:yaml": "gulp lint:yaml",

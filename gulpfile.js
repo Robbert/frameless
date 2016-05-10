@@ -382,10 +382,10 @@ function src(pattern)
     });
 }());
 
-// Gulp task `lint:html`
+// Gulp task `lint:html-validator`
 (function () {
     var validator = require("gulp-html");
-    gulp.task("lint:html", function() {
+    gulp.task("lint:html-validator", function() {
         return src(["application/xhtml+xml", "text/html"].map(mediaType.getMediaTypeExtensionsPattern))
             .pipe(validator());
     });
