@@ -193,6 +193,51 @@ function src(pattern)
     });
 }());
 
+// Gulp task `lint:json`
+(function () {
+    var _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        pluginName = "validate-json";
+
+    // TODO: Use streaming JSON parse to reduce memory usage.
+    function jsonValidatorPlugin()
+    {
+        function streamValidator(file, enc, cb)
+        {
+            var contents,
+                err = null;
+
+            if (file.isBuffer())
+            {
+                try
+                {
+                    contents = file.contents.toString("UTF-8");
+
+                    JSON.parse(contents);
+                }
+                catch (e)
+                {
+                    err = new PluginError(pluginName, "JSON syntax error in " + file.path + "\n" + e.message);
+                }
+            }
+            else if (file.isStream())
+            {
+                err = new PluginError(pluginName, "Streams are not supported.");
+            }
+
+            cb(err, file);
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:json", function () {
+        return src("**/*.json")
+            .pipe(jsonValidatorPlugin());
+    });
+}());
+
 // Gulp task `lint:filename`
 (function () {
     var _ = require("lodash"),
