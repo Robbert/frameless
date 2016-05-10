@@ -40,6 +40,7 @@
     "gulp-html": "^0.4",
     "gulp-lintspaces": "^0.4",
     "js-yaml": "^3.6",
+    "jsdom": "^9.0",
     "lodash": "^4.11",
     "media-type": "^0.3",
     "mime-db": "^1.23",
@@ -49,7 +50,7 @@
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "gulp lint:chmod lint:editorconfig lint:filename lint:json lint:package-json lint:yaml && npm run lint:eslint && npm run lint:java-dependent-detection",
+    "lint": "gulp lint:chmod lint:editorconfig lint:filename lint:html lint:json lint:package-json lint:yaml && npm run lint:eslint && npm run lint:java-dependent-detection",
     "lint:eslint": "eslint *.js src/",
     "lint:filename": "gulp lint:filename",
     "lint:java-dependent": "gulp lint:closure-compiler lint:html-validator",

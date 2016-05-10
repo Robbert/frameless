@@ -391,6 +391,78 @@ function src(pattern)
     });
 }());
 
+// Gulp task `lint:html`
+(function () {
+    var jsdom = require("jsdom"),
+        _gulp = require("gulp-util"),
+        through = require("through2"),
+        PluginError = _gulp.PluginError,
+        pluginName = "html";
+
+    // Prevent security vulnerabilities by access to external sources
+    jsdom.defaultDocumentFeatures = {
+        FetchExternalResources: false,
+        ProcessExternalResources: false
+    };
+
+    /**
+     * @param {Document} document
+     */
+    function lint(document)
+    {
+        if (!document.querySelector("html[lang]"))
+        {
+            throw new Error("Missing lang attribute on root element.");
+        }
+
+        // TODO: Switch to `meta[charset=UTF-8 i]` when jsdom supports this new CSS Selectors 4 feature
+        if (!document.querySelector("meta[charset=UTF-8]"))
+        {
+            throw new Error("Missing <meta charset=\"UTF-8\">");
+        }
+    }
+
+    function lintPlugin()
+    {
+        function streamValidator(file, enc, cb)
+        {
+            var err = null,
+                contents;
+
+            if (file.isBuffer())
+            {
+                try
+                {
+                    contents = file.contents.toString("UTF-8");
+
+                    jsdom.env(
+                        contents,
+                        function (err, window) {
+                            lint(window.document);
+                        }
+                    );
+                }
+                catch (e)
+                {
+                    err = new PluginError(pluginName, e.message);
+                }
+            }
+            else if (file.isStream())
+            {
+                err = new PluginError(pluginName, "Streams are not supported.");
+            }
+
+            cb(err, file);
+        }
+
+        return through.obj(streamValidator);
+    }
+
+    gulp.task("lint:html", function() {
+        return src("**/*.html")
+            .pipe(lintPlugin());
+    });}());
+
 // Gulp task `lint:chmod`
 (function () {
 
