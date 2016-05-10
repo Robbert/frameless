@@ -1,0 +1,34 @@
+{
+  "folders":
+  [
+    {
+      "file_exclude_patterns":
+      [
+        "*.gz",
+        "*.log",
+        "*.min.*",
+        "*.sublime-*",
+        ".eslintrc*",
+        ".editorconfig",
+        ".eslintrc*",
+        ".gitignore",
+        ".hgignore",
+        ".htaccess"
+      ],
+      "folder_exclude_patterns":
+      [
+        ".git",
+        ".hg",
+        ".svn",
+        "dist",
+        "node_modules",
+        "tmp"
+      ],
+      "path": "."
+    }
+  ],
+  "settings":
+  {
+    "tab_size": 4
+  }
+}
