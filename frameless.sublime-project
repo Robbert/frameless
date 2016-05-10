@@ -8,9 +8,8 @@
         "*.log",
         "*.min.*",
         "*.sublime-*",
-        ".eslintrc*",
         ".editorconfig",
-        ".eslintrc*",
+        ".*lintrc*",
         ".git*",
         ".hg*",
         ".htaccess"
