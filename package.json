@@ -33,10 +33,10 @@
   },
   "dependencies": {},
   "devDependencies": {
-    "eslint": "^2.9",
     "google-closure-compiler": ">=20160315",
     "gulp": "^3.9",
     "gulp-csslint": "^0.3",
+    "gulp-eslint": "^2.0",
     "gulp-html": "^0.4",
     "gulp-lintspaces": "^0.4",
     "js-yaml": "^3.6",
@@ -50,8 +50,7 @@
   },
   "scripts": {
     "test": "npm run lint",
-    "lint": "gulp lint:chmod lint:editorconfig lint:filename lint:html lint:json lint:package-json lint:yaml && npm run lint:eslint && npm run lint:java-dependent-detection",
-    "lint:eslint": "eslint *.js src/",
+    "lint": "gulp lint:chmod lint:editorconfig lint:eslint lint:filename lint:html lint:json lint:package-json lint:yaml && npm run lint:java-dependent-detection",
     "lint:filename": "gulp lint:filename",
     "lint:java-dependent": "gulp lint:closure-compiler lint:html-validator",
     "lint:java-dependent-detection": "if which java >/dev/null 2>&1; then npm run lint:java-dependent; else true; fi",

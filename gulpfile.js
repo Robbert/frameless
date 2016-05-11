@@ -528,3 +528,14 @@ function src(pattern)
             .pipe(csslint.reporter());
     });
 }());
+
+// Gulp task `lint:eslint`
+(function () {
+    var eslint = require("gulp-eslint");
+
+    gulp.task("lint:eslint", function() {
+        return src(mediaType.getMediaTypeExtensionsPattern("application/javascript"))
+            .pipe(eslint())
+            .pipe(eslint.formatEach("compact", process.stderr));
+    });
+}());
