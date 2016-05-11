@@ -6,7 +6,9 @@ var gulp = require("gulp");
  * Files that need to be ignored by all linting tasks.
  */
 var lintIgnore = [
-    "node_modules/**"
+    "dist/**",
+    "node_modules/**",
+    "tmp/**"
 ];
 
 var mediaType = (function ()
