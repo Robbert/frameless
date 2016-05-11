@@ -535,9 +535,22 @@ function src(pattern)
 (function () {
     var eslint = require("gulp-eslint");
 
+    // Some rules conflict with Closure Compiler annotations, disable those
+    // for continuous integration builds, simply show them as warnings during
+    // development in your favorite editor.
+    //
+    // - Only show `no-unused-expressions` warnings during development
+    // - Only show `no-extra-parens` warnings during development
+    var lintSettings = {
+        "rules": {
+            "no-extra-parens": ["off"],
+            "no-unused-expressions": ["off"]
+        }
+    };
+
     gulp.task("lint:eslint", function() {
         return src(mediaType.getMediaTypeExtensionsPattern("application/javascript"))
-            .pipe(eslint())
+            .pipe(eslint(lintSettings))
             .pipe(eslint.formatEach("compact", process.stderr));
     });
 }());
