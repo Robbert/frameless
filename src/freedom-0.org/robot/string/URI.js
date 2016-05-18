@@ -3,9 +3,9 @@
  * @license © 2013, The Knights Who Say NIH B.V. All rights reserved.
  */
 
-define("freedom-0.org/robot/string/URI", function ()
+define('freedom-0.org/robot/string/URI', function ()
 {
-    "use strict";
+    'use strict';
 
     /**
      * Note: this constructor cannot be called URL, because it would conflict
@@ -39,13 +39,13 @@ define("freedom-0.org/robot/string/URI", function ()
                 // TODO: Add support for Array values
                 value = map[name] === null
                     ? name
-                    : name + "=" + escape(map[name]);
+                    : name + '=' + escape(map[name]);
 
                 buffer.push(value);
             }
         }
 
-        return buffer.join("&");
+        return buffer.join('&');
     };
 
     /**
@@ -56,7 +56,7 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         var params = URI.encodeParams(map, encodeURIComponent);
 
-        return params ? "?" + params : params;
+        return params ? '?' + params : params;
     };
 
     /**
@@ -67,7 +67,7 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         // TODO: Handle non-URL codepoints
         // @see https://url.spec.whatwg.org/#url-code-points
-        return hash.replace(/[\0\t\r\n]+/g, "");
+        return hash.replace(/[\0\t\r\n]+/g, '');
     };
 
     /**
@@ -78,7 +78,7 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         var params = URI.encodeParams(map, URI.encodeURIFragment);
 
-        return params ? "#" + params : params;
+        return params ? '#' + params : params;
     };
 
     /**
@@ -89,17 +89,17 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         var i, pairs, item, map = {};
 
-        if (str.charAt(0) === "?")
+        if (str.charAt(0) === '?')
         {
             str = str.substr(1);
         }
 
-        pairs = str.split("&");
+        pairs = str.split('&');
 
         for (i = pairs.length; i--;)
         {
-            item = pairs[i].split("=");
-            map[decodeURIComponent(item[0])] = item[1] ? decodeURIComponent(item[1]) : "";
+            item = pairs[i].split('=');
+            map[decodeURIComponent(item[0])] = item[1] ? decodeURIComponent(item[1]) : '';
         }
 
         return map;
@@ -143,37 +143,37 @@ define("freedom-0.org/robot/string/URI", function ()
     URI.prototype.components;
 
     /** @type {string} */
-    URI.prototype.scheme = "";
+    URI.prototype.scheme = '';
 
     /** @type {string} */
-    URI.prototype.authority = "";
+    URI.prototype.authority = '';
 
     /** @type {string} */
-    URI.prototype.path = "";
+    URI.prototype.path = '';
 
     /** @type {string} */
-    URI.prototype.query = "";
+    URI.prototype.query = '';
 
     /** @type {string} */
-    URI.prototype.fragment = "";
+    URI.prototype.fragment = '';
 
     /** @type {string} */
-    URI.prototype.username = "";
+    URI.prototype.username = '';
 
     /** @type {string} */
-    URI.prototype.password = "";
+    URI.prototype.password = '';
 
     /** @type {string} */
-    URI.prototype.hostname = "";
+    URI.prototype.hostname = '';
 
     /** @type {string} */
-    URI.prototype.port = "";
+    URI.prototype.port = '';
 
     /** @type {Array.<string>} */
     URI.prototype.dirs;
 
     /** @type {string} */
-    URI.prototype.file = "";
+    URI.prototype.file = '';
 
     /** @type {boolean} */
     URI.prototype.isAbsolute = false;
@@ -198,7 +198,7 @@ define("freedom-0.org/robot/string/URI", function ()
         /** @type {Array.<string>} */
         var dirs;
 
-        if (typeof that === "string")
+        if (typeof that === 'string')
         {
             uri = new URI(that);
         }
@@ -217,22 +217,22 @@ define("freedom-0.org/robot/string/URI", function ()
         }
         else if (uri.isSelfReference)
         {
-            return new URI(this.components.scheme + this.components.authority + this.components.path + this.components.query + "#" + uri.fragment);
+            return new URI(this.components.scheme + this.components.authority + this.components.path + this.components.query + '#' + uri.fragment);
         }
         else
         {
-            if (uri.path.charAt(0) === "/")
+            if (uri.path.charAt(0) === '/')
             {
                 path = uri.path;
             }
-            else if (uri.components.authority === "")
+            else if (uri.components.authority === '')
             {
                 dirs = [];
 
                 // Add base URI dirs to the path, omitting "."
                 for (i = 0; i < this.dirs.length; ++i)
                 {
-                    if (this.dirs[i] !== ".")
+                    if (this.dirs[i] !== '.')
                     {
                         dirs.push(this.dirs[i]);
                     }
@@ -241,7 +241,7 @@ define("freedom-0.org/robot/string/URI", function ()
                 // Add relative URI dirs to the path, omitting "."
                 for (i = 0; i < uri.dirs.length; ++i)
                 {
-                    if (uri.dirs[i] !== ".")
+                    if (uri.dirs[i] !== '.')
                     {
                         dirs.push(uri.dirs[i]);
                     }
@@ -249,34 +249,34 @@ define("freedom-0.org/robot/string/URI", function ()
 
                 for (i = 1; i < dirs.length; ++i)
                 {
-                    if (dirs[i-1] && dirs[i] === ".." && dirs[i - 1] !== "..")
+                    if (dirs[i-1] && dirs[i] === '..' && dirs[i - 1] !== '..')
                     {
                         dirs.splice(--i, 2);
                         --i;
                     }
                 }
 
-                file = uri.file !== "." && uri.file !== ".." ? uri.file : "";
+                file = uri.file !== '.' && uri.file !== '..' ? uri.file : '';
 
-                if (uri.file === "..")
+                if (uri.file === '..')
                 {
                     dirs.pop();
                 }
 
-                path = (this.path.charAt(0) === "/" || this.path.charAt(0) === "" ? "/" : "")
-                    + dirs.join("/")
-                    + (dirs.length > 0 ? "/" : "")
+                path = (this.path.charAt(0) === '/' || this.path.charAt(0) === '' ? '/' : '')
+                    + dirs.join('/')
+                    + (dirs.length > 0 ? '/' : '')
                     + file;
             }
             else
             {
-                path = "";
+                path = '';
             }
 
             scheme    = this.components.scheme.toLowerCase();
             authority = uri.components.authority || this.components.authority;
-            query     = uri.query ? "?" + uri.query : "";
-            fragment  = uri.fragment ? "#" + uri.fragment : "";
+            query     = uri.query ? '?' + uri.query : '';
+            fragment  = uri.fragment ? '#' + uri.fragment : '';
 
             return new URI(scheme + authority + path + query + fragment);
         }
@@ -291,21 +291,21 @@ define("freedom-0.org/robot/string/URI", function ()
             match = /** @type {Array.<string>} */ (URI.regexp1.exec(string));
 
         this.components = {
-            scheme:     match[1] || "",
-            authority:  match[3] || "",
-            path:       match[5] || "",
-            query:      match[6] || "",
-            fragment:   match[8] || ""
+            scheme:     match[1] || '',
+            authority:  match[3] || '',
+            path:       match[5] || '',
+            query:      match[6] || '',
+            fragment:   match[8] || ''
         };
 
-        this.scheme    = match[2] || "";
-        this.authority = match[4] || "";
-        this.path      = match[5] || "";
-        this.query     = match[7] || "";
-        this.fragment  = match[9] || "";
+        this.scheme    = match[2] || '';
+        this.authority = match[4] || '';
+        this.path      = match[5] || '';
+        this.query     = match[7] || '';
+        this.fragment  = match[9] || '';
 
-        at   = this.authority.indexOf("@");
-        port = this.authority.lastIndexOf(":");
+        at   = this.authority.indexOf('@');
+        port = this.authority.lastIndexOf(':');
 
         if (at === -1)
         {
@@ -313,7 +313,7 @@ define("freedom-0.org/robot/string/URI", function ()
         }
         else
         {
-            index = this.authority.indexOf(":");
+            index = this.authority.indexOf(':');
 
             if (index !== -1 && index < at)
             {
@@ -329,24 +329,24 @@ define("freedom-0.org/robot/string/URI", function ()
 
         if (port > at)
         {
-            this.port = this.hostname.substring(port + 1).replace(/^0+(.+)$/, "$1");
+            this.port = this.hostname.substring(port + 1).replace(/^0+(.+)$/, '$1');
             this.hostname = this.hostname.substring(0, port);
         }
 
         if (this.hostname)
         {
-            this.hostname = this.hostname.toLowerCase().replace(/\u3002|\uFF0E|\uFF61/g, ".");
+            this.hostname = this.hostname.toLowerCase().replace(/\u3002|\uFF0E|\uFF61/g, '.');
         }
 
         if (this.path)
         {
             this.dirs = /** @type {Array.<string>} */ (this.path.match(URI.regexp2) || []);
 
-            if (this.path.charAt(this.path.length-1) !== "/")
+            if (this.path.charAt(this.path.length-1) !== '/')
             {
                 file = this.dirs.pop();
-                if (!file || file === "." || file === "..") {
-                    file = "";
+                if (!file || file === '.' || file === '..') {
+                    file = '';
                 }
                 this.file = file;
             }
@@ -354,7 +354,7 @@ define("freedom-0.org/robot/string/URI", function ()
         else
         {
             this.dirs = [];
-            this.file = "";
+            this.file = '';
         }
 
         if (this.query)
@@ -362,11 +362,11 @@ define("freedom-0.org/robot/string/URI", function ()
             this.params = URI.parseQueryParams(this.query);
         }
 
-        this.isAbsolute      = this.scheme !== "";
-        this.isRelative      = this.scheme === "";
-        this.isSelfReference = this.scheme + this.authority + this.path + this.query === "";
-        this.isEmpty         = this.isSelfReference && this.fragment === "";
-        this.isHTTP          = this.scheme === "http" || this.scheme === "https";
+        this.isAbsolute      = this.scheme !== '';
+        this.isRelative      = this.scheme === '';
+        this.isSelfReference = this.scheme + this.authority + this.path + this.query === '';
+        this.isEmpty         = this.isSelfReference && this.fragment === '';
+        this.isHTTP          = this.scheme === 'http' || this.scheme === 'https';
     };
 
     /**
@@ -374,7 +374,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.prototype.getDomains = function ()
     {
-        return this.hostname.split(".");
+        return this.hostname.split('.');
     };
 
     /**
@@ -446,7 +446,7 @@ define("freedom-0.org/robot/string/URI", function ()
     {
         // TODO
         // http://tools.ietf.org/html/rfc3986#section-2.3
-        return "";
+        return '';
     };
 
     /**
@@ -498,7 +498,7 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.removeInvalidCharacters = function (url)
     {
-        return url.replace(URI.INVALID_REGEXP_BMP, "");
+        return url.replace(URI.INVALID_REGEXP_BMP, '');
     };
 
     /**
@@ -533,7 +533,7 @@ define("freedom-0.org/robot/string/URI", function ()
 
         // The Internet Explorer only `mhtml` scheme is a bad idea too
         // @see http://html5sec.org/#96
-        url = url.replace(URI.UNSAFE_PROTOCOL_REGEXP, "about:blank");
+        url = url.replace(URI.UNSAFE_PROTOCOL_REGEXP, 'about:blank');
 
         return url;
     };
@@ -543,9 +543,9 @@ define("freedom-0.org/robot/string/URI", function ()
      */
     URI.getLocation = function ()
     {
-        return typeof location !== "undefined"
+        return typeof location !== 'undefined'
             ? location.href
-            : "";
+            : '';
     };
 
     /**

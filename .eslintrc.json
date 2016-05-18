@@ -55,7 +55,7 @@
     "no-useless-escape": ["error"],
     "no-void": ["error"],
     "no-with": ["error"],
-    "quotes": ["error", "double"],
+    "quotes": ["error", "single"],
     "radix": ["error", "always"],
     "semi": ["error", "always"],
     "strict": ["error", "global"],
