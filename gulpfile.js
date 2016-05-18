@@ -11,8 +11,7 @@ var lintIgnore = [
     'tmp/**'
 ];
 
-var mediaType = (function ()
-{
+var mediaTypeUtil = (function () {
     var _ = require('lodash'),
         mimeDB = require('mime-db'),
         MediaType = require('media-type');
@@ -45,7 +44,7 @@ var mediaType = (function ()
      * @param {string} mediaType
      * @return {Array<string>}
      */
-    function getMediaTypeExtensionsPattern(mediaType)
+    function globMediaType(mediaType)
     {
         return getExtensionsPattern(getMediaTypeExtensions(mediaType));
     }
@@ -85,10 +84,10 @@ var mediaType = (function ()
     }
 
     return {
-        isJSON: isJSON,
+        isJSON:               isJSON,
         getExtensionsPattern: getExtensionsPattern,
-        getJSONPattern: getJSONPattern,
-        getMediaTypeExtensionsPattern: getMediaTypeExtensionsPattern
+        getJSONPattern:       getJSONPattern,
+        globMediaType:        globMediaType
     };
 }());
 
@@ -98,7 +97,7 @@ var mediaType = (function ()
  * @param {string} prefix
  * @return {function(string):string}
  */
-function prepend(prefix)
+function prependWith(prefix)
 {
     return function prepend(str)
     {
@@ -112,7 +111,7 @@ function prepend(prefix)
  */
 function src(pattern)
 {
-    var ignore = lintIgnore.map(prepend('!'));
+    var ignore = lintIgnore.map(prependWith('!'));
 
     var args = typeof pattern === 'string' ? [pattern] : pattern;
 
@@ -123,37 +122,42 @@ function src(pattern)
 
 // Gulp task `lint:closure-compiler`
 (function () {
-    var closure = require('google-closure-compiler').gulp(),
+    var closure = require('google-closure-compiler'),
         _ = require('lodash');
+
+    var closureCompiler = closure.gulp();
 
     // TODO: Load copyright line from `license.txt` and output it inside a comment
     var license = '(c) ' + new Date().getFullYear() + ' All rights reserved.';
 
     var closureSettings = {
-        'compilation_level': 'ADVANCED_OPTIMIZATIONS',
-        'language_in': 'ECMASCRIPT5_STRICT',
+        'compilation_level':    'ADVANCED_OPTIMIZATIONS',
+        'language_in':          'ECMASCRIPT5_STRICT',
+        'warning_level':        'VERBOSE',
+        'charset':              'UTF-8',
         'summary_detail_level': 3,
-        'charset': 'UTF-8',
-        'warning_level': 'VERBOSE',
+
+        'use_types_for_optimization': null,
+        'new_type_inf':               null,
+        'assume_function_wrapper':    null,
+
         'externs': [
             'node_modules/nih-externs/lib/amd.js'
         ],
-        'use_types_for_optimization': undefined,
-        'new_type_inf': undefined,
-        'assume_function_wrapper': undefined,
+
         'output_wrapper': '/** @license ' + license + ' */void function(){%output%}();'
     };
 
-    gulp.task('lint:closure-compiler', function () {
-
+    gulp.task('lint:closure-compiler', function ()
+    {
         var lintSettings = {
-            'checks_only': undefined
+            'checks_only': null
         };
 
         lintSettings = _.merge({}, closureSettings, lintSettings);
 
-        return src('./src/' + mediaType.getMediaTypeExtensionsPattern('application/javascript'))
-            .pipe(closure(lintSettings));
+        return src('./src/' + mediaTypeUtil.globMediaType('application/javascript'))
+            .pipe(closureCompiler(lintSettings));
     });
 }());
 
@@ -162,15 +166,20 @@ function src(pattern)
     var _ = require('lodash'),
         _gulp = require('gulp-util'),
         through = require('through2'),
-        PluginError = _gulp.PluginError,
-        packageValidator = require('package-json-validator').PJV,
-        lintSettings = {
-            'spec': 'npm',
-            'warnings': true,
-            'recommendations': true
-        },
+        packageValidator = require('package-json-validator');
+
+    var PluginError = _gulp.PluginError,
         pluginName = 'validate-package';
 
+    var lintSettings = {
+        'spec':            'npm',
+        'warnings':        true,
+        'recommendations': true
+    };
+
+    /**
+     * @param {Object} result
+     */
     function formatError(result)
     {
         var msg = '';
@@ -194,19 +203,29 @@ function src(pattern)
         return msg;
     }
 
+    /**
+     * @param {Object} settings
+     * @return {Stream}
+     */
     function packageValidatorPlugin(settings)
     {
         var spec = settings.spec || 'json';
 
-        // Creating a stream through which each file will pass
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(?Error, ?Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
-            var result, LF = '\n', msg = '',
+            var result,
+                LF = '\n',
+                msg = '',
                 err = null;
 
             if (file.isBuffer())
             {
-                result = packageValidator.validate(file.contents.toString('UTF-8'), spec, settings);
+                result = packageValidator.PJV.validate(file.contents.toString('UTF-8'), spec, settings);
             }
             else if (file.isStream())
             {
@@ -221,6 +240,7 @@ function src(pattern)
             cb(err, file);
         }
 
+        // Creating a stream through which each file will pass:
         return through.obj(streamValidator);
     }
 
@@ -236,15 +256,26 @@ function src(pattern)
     var _ = require('lodash'),
         _gulp = require('gulp-util'),
         through = require('through2'),
-        PluginError = _gulp.PluginError,
-        yaml = require('js-yaml'),
+        yaml = require('js-yaml');
+
+    var PluginError = _gulp.PluginError,
         pluginName = 'validate-yaml';
 
+    /**
+     * @return {Stream}
+     */
     function yamlValidatorPlugin()
     {
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(Error, Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
-            var contents, LF = '\n', msg = '',
+            var contents,
+                LF = '\n',
+                msg = '',
                 err = null;
 
             if (file.isBuffer())
@@ -279,13 +310,22 @@ function src(pattern)
 // Gulp task `lint:json`
 (function () {
     var _gulp = require('gulp-util'),
-        through = require('through2'),
-        PluginError = _gulp.PluginError,
+        through = require('through2');
+
+    var PluginError = _gulp.PluginError,
         pluginName = 'validate-json';
 
     // TODO: Use streaming JSON parse to reduce memory usage.
+    /**
+     * @return {Stream}
+     */
     function jsonValidatorPlugin()
     {
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(?Error, ?Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
             var contents,
@@ -316,7 +356,7 @@ function src(pattern)
     }
 
     gulp.task('lint:json', function () {
-        return src(mediaType.getJSONPattern())
+        return src(mediaTypeUtil.getJSONPattern())
             .pipe(jsonValidatorPlugin());
     });
 }());
@@ -326,16 +366,26 @@ function src(pattern)
     var _ = require('lodash'),
         _gulp = require('gulp-util'),
         through = require('through2'),
-        PluginError = _gulp.PluginError,
-        sanitize = require('sanitize-filename'),
+        sanitize = require('sanitize-filename');
+
+    var PluginError = _gulp.PluginError,
         pluginName = 'validate-filename',
         MAX_FILENAME_LENGTH = 32;
 
+    /**
+     * @return {Stream}
+     */
     function filenameValidatorPlugin()
     {
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(?Error, ?Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
-            var err = null, msg,
+            var msg,
+                err = null,
                 filename = file.path.replace(/^.+\//, '');
 
             if (sanitize(filename) !== filename)
@@ -368,13 +418,12 @@ function src(pattern)
 // Gulp task `lint:editorconfig`
 (function () {
     var _ = require('lodash'),
-        lintspaces = require('gulp-lintspaces'),
-        options = {
-            'editorconfig': '.editorconfig',
-            'ignores': [
-                'js-comments'
-            ]
-        };
+        lintspaces = require('gulp-lintspaces');
+
+    var options = {
+        'editorconfig': '.editorconfig',
+        'ignores':      ['js-comments']
+    };
 
 
     gulp.task('lint:editorconfig', function () {
@@ -387,8 +436,9 @@ function src(pattern)
 // Gulp task `lint:html-validator`
 (function () {
     var validator = require('gulp-html');
-    gulp.task('lint:html-validator', function() {
-        return src(['application/xhtml+xml', 'text/html'].map(mediaType.getMediaTypeExtensionsPattern))
+
+    gulp.task('lint:html-validator', function () {
+        return src(['application/xhtml+xml', 'text/html'].map(mediaTypeUtil.globMediaType))
             .pipe(validator());
     });
 }());
@@ -397,13 +447,14 @@ function src(pattern)
 (function () {
     var jsdom = require('jsdom'),
         _gulp = require('gulp-util'),
-        through = require('through2'),
-        PluginError = _gulp.PluginError,
+        through = require('through2');
+
+    var PluginError = _gulp.PluginError,
         pluginName = 'html';
 
     // Prevent security vulnerabilities by access to external sources
     jsdom.defaultDocumentFeatures = {
-        FetchExternalResources: false,
+        FetchExternalResources:   false,
         ProcessExternalResources: false
     };
 
@@ -424,8 +475,16 @@ function src(pattern)
         }
     }
 
+    /**
+     * @return {Stream}
+     */
     function lintPlugin()
     {
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(?Error, ?Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
             var err = null,
@@ -460,36 +519,47 @@ function src(pattern)
         return through.obj(streamValidator);
     }
 
-    gulp.task('lint:html', function() {
+    gulp.task('lint:html', function () {
         return src('**/*.html')
             .pipe(lintPlugin());
-    });}());
+    });
+}());
 
 // Gulp task `lint:chmod`
 (function () {
-
     var fs = require('fs'),
         _gulp = require('gulp-util'),
-        through = require('through2'),
-        PluginError = _gulp.PluginError,
-        pluginName = 'chmod',
-        OCTAL_0777 = parseInt('0777', 8),
-        settings = {
-            dir: parseInt('0755', 8),
-            file: parseInt('0644', 8)
-        };
+        through = require('through2');
 
+    var PluginError = _gulp.PluginError,
+        pluginName = 'chmod',
+        OCTAL_0777 = parseInt('0777', 8);
+
+    var settings = {
+        dir:  parseInt('0755', 8),
+        file: parseInt('0644', 8)
+    };
+
+    /**
+     * @param {Object} settings
+     * @return {Stream}
+     */
     function permissionValidatorPlugin(settings)
     {
+        /**
+         * @param {Object} file
+         * @param {string} enc
+         * @param {function(?Error, ?Object)} cb
+         */
         function streamValidator(file, enc, cb)
         {
-            var err = null, msg,
+            var msg,
                 filename = file.path.replace(/^.+\//, '');
 
             fs.lstat(file.path, function (e, stat) {
                 var msg, err;
 
-                if (err)
+                if (e)
                 {
                     msg = 'Couldn\'t read file permissions: ' + e.message;
                 }
@@ -515,7 +585,7 @@ function src(pattern)
         return through.obj(streamValidator);
     }
 
-    gulp.task('lint:chmod', function() {
+    gulp.task('lint:chmod', function () {
         return src('**')
             .pipe(permissionValidatorPlugin(settings));
     });
@@ -524,8 +594,9 @@ function src(pattern)
 // Gulp task `lint:css`
 (function () {
     var csslint = require('gulp-csslint');
-    gulp.task('lint:css', function() {
-        return src(mediaType.getMediaTypeExtensionsPattern('text/css'))
+
+    gulp.task('lint:css', function () {
+        return src(mediaTypeUtil.globMediaType('text/css'))
             .pipe(csslint('.csslintrc.json'))
             .pipe(csslint.reporter());
     });
@@ -543,13 +614,13 @@ function src(pattern)
     // - Only show `no-extra-parens` warnings during development
     var lintSettings = {
         'rules': {
-            'no-extra-parens': ['off'],
+            'no-extra-parens':       ['off'],
             'no-unused-expressions': ['off']
         }
     };
 
-    gulp.task('lint:eslint', function() {
-        return src(mediaType.getMediaTypeExtensionsPattern('application/javascript'))
+    gulp.task('lint:eslint', function () {
+        return src(mediaTypeUtil.globMediaType('application/javascript'))
             .pipe(eslint(lintSettings))
             .pipe(eslint.formatEach('compact', process.stderr));
     });

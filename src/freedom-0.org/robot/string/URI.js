@@ -87,7 +87,8 @@ define('freedom-0.org/robot/string/URI', function ()
      */
     URI.parseQueryParams = function (str)
     {
-        var i, pairs, item, map = {};
+        var i, pairs, item,
+            map = {};
 
         if (str.charAt(0) === '?')
         {
@@ -188,23 +189,19 @@ define('freedom-0.org/robot/string/URI', function ()
     URI.prototype.isEmpty = true;
 
     /**
-     * @param  {URI|string} that
+     * @param  {URI|string} uri
      * @return {URI}
      */
-    URI.prototype.resolve = function resolve(that)
+    URI.prototype.resolve = function resolve(uri)
     {
-        var i, path, file, scheme, authority, query, fragment, uri;
+        var i, path, file, scheme, authority, query, fragment;
 
         /** @type {Array.<string>} */
         var dirs;
 
-        if (typeof that === 'string')
+        if (typeof uri === 'string')
         {
-            uri = new URI(that);
-        }
-        else
-        {
-            uri = that;
+            uri = new URI(uri);
         }
 
         if (this.isEmpty || uri.isAbsolute)
@@ -217,7 +214,14 @@ define('freedom-0.org/robot/string/URI', function ()
         }
         else if (uri.isSelfReference)
         {
-            return new URI(this.components.scheme + this.components.authority + this.components.path + this.components.query + '#' + uri.fragment);
+            return new URI(
+                  this.components.scheme
+                + this.components.authority
+                + this.components.path
+                + this.components.query
+                + '#'
+                + uri.fragment
+            );
         }
         else
         {
@@ -249,7 +253,7 @@ define('freedom-0.org/robot/string/URI', function ()
 
                 for (i = 1; i < dirs.length; ++i)
                 {
-                    if (dirs[i-1] && dirs[i] === '..' && dirs[i - 1] !== '..')
+                    if (dirs[i - 1] && dirs[i] === '..' && dirs[i - 1] !== '..')
                     {
                         dirs.splice(--i, 2);
                         --i;
@@ -291,11 +295,11 @@ define('freedom-0.org/robot/string/URI', function ()
             match = /** @type {Array.<string>} */ (URI.regexp1.exec(string));
 
         this.components = {
-            scheme:     match[1] || '',
-            authority:  match[3] || '',
-            path:       match[5] || '',
-            query:      match[6] || '',
-            fragment:   match[8] || ''
+            scheme:    match[1] || '',
+            authority: match[3] || '',
+            path:      match[5] || '',
+            query:     match[6] || '',
+            fragment:  match[8] || ''
         };
 
         this.scheme    = match[2] || '';
@@ -342,10 +346,11 @@ define('freedom-0.org/robot/string/URI', function ()
         {
             this.dirs = /** @type {Array.<string>} */ (this.path.match(URI.regexp2) || []);
 
-            if (this.path.charAt(this.path.length-1) !== '/')
+            if (this.path.charAt(this.path.length - 1) !== '/')
             {
                 file = this.dirs.pop();
-                if (!file || file === '.' || file === '..') {
+                if (!file || file === '.' || file === '..')
+                {
                     file = '';
                 }
                 this.file = file;
@@ -400,38 +405,42 @@ define('freedom-0.org/robot/string/URI', function ()
      */
     URI.prototype.toString = function toString()
     {
-        return this.components.scheme + this.components.authority + this.components.path + this.components.query + this.components.fragment;
+        return this.components.scheme
+             + this.components.authority
+             + this.components.path
+             + this.components.query
+             + this.components.fragment;
     };
 
     /**
-     * @param  {URI} that
+     * @param  {URI} uri
      * @return {boolean}
      */
-    URI.prototype.equals = function equals(that)
+    URI.prototype.equals = function equals(uri)
     {
-        if (this.scheme.toLowerCase() !== that.scheme.toLowerCase())
+        if (this.scheme.toLowerCase() !== uri.scheme.toLowerCase())
         {
             return false;
         }
 
         // TODO: Implement this.hostname, and check only this.hostname case insenstive
         // Check this.username and this.password, and check this.port with default ports in mind
-        if (this.authority.toLowerCase() !== that.authority.toLowerCase())
+        if (this.authority.toLowerCase() !== uri.authority.toLowerCase())
         {
             return false;
         }
 
-        if (URI.percentDecode(this.path) !== URI.percentDecode(that.path))
+        if (URI.percentDecode(this.path) !== URI.percentDecode(uri.path))
         {
             return false;
         }
 
-        if (this.query !== that.query)
+        if (this.query !== uri.query)
         {
             return false;
         }
 
-        if (this.fragment !== that.query)
+        if (this.fragment !== uri.query)
         {
             return false;
         }
@@ -442,7 +451,7 @@ define('freedom-0.org/robot/string/URI', function ()
     /**
      * @return {string}
      */
-    URI.prototype.normalize = function()
+    URI.prototype.normalize = function ()
     {
         // TODO
         // http://tools.ietf.org/html/rfc3986#section-2.3
@@ -462,7 +471,8 @@ define('freedom-0.org/robot/string/URI', function ()
          * @param {string} hex
          * @return {string}
          */
-        function hex2char(match, hex) {
+        function hex2char(match, hex)
+        {
             return String.fromCharCode(parseInt(hex, 16));
         }
 
@@ -584,7 +594,8 @@ define('freedom-0.org/robot/string/URI', function ()
             dirs = a.dirs.length - b.dirs.length;
 
         // FIXME: Surely, this must be a bug: dirs should only matter when everything up to the path is equal, right?
-        if (dirs) {
+        if (dirs)
+        {
             return dirs;
         }
 
@@ -612,7 +623,9 @@ define('freedom-0.org/robot/string/URI', function ()
      */
     URI.resolve = function (url, base)
     {
-        return new URI(base).resolve(new URI(url)).toString();
+        var resolved = new URI(base).resolve(new URI(url));
+
+        return resolved.toString();
     };
 
     return URI;
